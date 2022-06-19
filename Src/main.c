@@ -108,7 +108,10 @@ int main(void)
   lcd_init(&hspi1);
   lcd_clear();
   lcd_backlight(1);
+
   uint8_t data[3] = {0xff, 0xff, 0xff};
+
+  lcd_set_cursor(60, 5);
   lcd_draw(&data, 3);
 
   // uint8_t rect_line = 0b111111111;

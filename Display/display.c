@@ -41,7 +41,6 @@ void lcd_init(SPI_HandleTypeDef *_spi_handle)
 
 void lcd_clear()
 {
-
     lcd_write_command(0b10000000);
     lcd_write_command(0b01000000);
 
@@ -60,6 +59,22 @@ void lcd_draw(uint8_t *data, uint8_t size)
 void lcd_backlight(uint8_t enabled)
 {
     HAL_GPIO_WritePin(LCD_LIGHT_PORT, LCD_LIGHT_PIN, enabled ? GPIO_PIN_RESET : GPIO_PIN_SET);
+}
+
+void lcd_set_cursor_y(uint8_t y)
+{
+    lcd_write_command(0b01000000 | y);
+}
+
+void lcd_set_cursor_x(uint8_t x)
+{
+    lcd_write_command(0b10000000 | x);
+}
+
+void lcd_set_cursor(uint8_t x, uint8_t y)
+{
+    lcd_set_cursor_x(x);
+    lcd_set_cursor_y(y);
 }
 
 static void lcd_write_command(uint8_t data)
