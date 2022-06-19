@@ -1,0 +1,47 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceRoot}/Inc",
+                "${workspaceRoot}/Display",
+                "${workspaceRoot}/Drivers/STM32F1xx_HAL_Driver/Inc",
+                "${workspaceRoot}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy",
+                "${workspaceRoot}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                "${workspaceRoot}/Drivers/CMSIS/Include"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F103xB"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "-mcpu=cortex-m4",
+                "-mthumb",
+                "-mfloat-abi=hard"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "browse": {
+                "path": [
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/Inc",
+                    "${workspaceRoot}/Display",
+                    "${workspaceRoot}/Drivers/STM32F1xx_HAL_Driver/Inc",
+                    "${workspaceRoot}/Drivers/CMSIS/Include",
+                    "${workspaceRoot}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                    "${workspaceRoot}/Drivers/CMSIS/Device/ST/STM32F1xx",
+                    "${workspaceRoot}/Inc",
+                    "${workspaceRoot}/Drivers/STM32F1xx_HAL_Driver/Inc",
+                    "${workspaceRoot}/Drivers/CMSIS/Include",
+                    "${workspaceRoot}/Drivers/CMSIS/Device/ST/STM32F1xx/Include"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${workspaceRoot}/.vscode/browse.vc.db"
+            },
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}

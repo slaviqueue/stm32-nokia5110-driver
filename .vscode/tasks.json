@@ -1,0 +1,35 @@
+// Name these taks the way you want
+// Configure command in make to use desired amount of threads (now 4)
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "all",
+                "-j4"
+            ]
+        },
+        {
+            "label": "clean",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ]
+        },
+        {
+            "label": "flash",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "flash"
+            ]
+        },
+    ]
+}
