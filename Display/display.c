@@ -1,4 +1,5 @@
 #include "stm32f1xx_hal.h"
+#include "display.h"
 
 #define LCD_CHIP_ENABLE_PORT GPIOA
 #define LCD_CHIP_ENABLE_PIN GPIO_PIN_4
@@ -22,7 +23,7 @@ SPI_HandleTypeDef *spi_handle;
 
 static void lcd_reset(void);
 static void lcd_write_command(uint8_t data);
-static void lcd_write_data(uint8_t *data, uint8_t size);
+static void lcd_write_data(uint8_t *data, uint16_t size);
 static void lcd_write_byte(uint8_t data);
 
 void lcd_init(SPI_HandleTypeDef *_spi_handle)
@@ -45,11 +46,29 @@ void lcd_clear()
     lcd_write_command(0b01000000);
 
     for (int i = 0; i < 504; i++)
-        lcd_write_byte(0b00000000);
+    {
+        lcd_write_byte(0x00);
+    }
 }
 
-void lcd_draw(uint8_t *data, uint8_t size)
+void lcd_draw_char(uint8_t *character)
 {
+    lcd_draw(character, CHAR_LENGTH);
+}
+
+void lcd_draw(uint8_t *data, uint16_t size)
+{
+    /*
+    For some fucking unknown reasons the line below
+    does not work correctly in this case without delay.
+    It sends only first couple of bytes. WIth delay everything works ok:
+
+    uint8_t bitmap[84];
+    for (int i = 0; i < 84; i++) bitmap[i] = 255;
+    // HAL_Delay(1);
+    lcd_draw(bitmap, 84);
+    */
+
     for (int i = 0; i < size; i++)
     {
         lcd_write_byte(data[i]);
@@ -85,7 +104,7 @@ static void lcd_write_command(uint8_t data)
     HAL_GPIO_WritePin(LCD_CHIP_ENABLE_PORT, LCD_CHIP_ENABLE_PIN, GPIO_PIN_SET);
 }
 
-static void lcd_write_data(uint8_t *data, uint8_t size)
+static void lcd_write_data(uint8_t *data, uint16_t size)
 {
     HAL_GPIO_WritePin(LCD_DATA_COMMAND_PORT, LCD_DATA_COMMAND_PIN, LCD_DATA_MODE);
     HAL_GPIO_WritePin(LCD_CHIP_ENABLE_PORT, LCD_CHIP_ENABLE_PIN, GPIO_PIN_RESET);
@@ -95,7 +114,6 @@ static void lcd_write_data(uint8_t *data, uint8_t size)
 
 static void lcd_reset()
 {
-
     HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_RESET);
     HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_SET);
@@ -104,4 +122,9 @@ static void lcd_reset()
 static void lcd_write_byte(uint8_t data)
 {
     lcd_write_data(&data, 1);
+}
+
+void lcd_write_multiple_bytes(uint8_t *data, uint16_t size)
+{
+    lcd_write_data(data, size);
 }

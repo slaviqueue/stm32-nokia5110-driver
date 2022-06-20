@@ -18,9 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display.h"
+#include "font.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,21 +67,6 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-  // uint8_t command_set_addition_mode = 0x21;
-  // lcd_write_command(&command_set_addition_mode, 1);
-
-  // uint8_t command_set_basic_mode = 0x20;
-  // lcd_write_command(&command_set_basic_mode, 1);
-
-  // uint8_t strange_shit_1 = 0b00100000;
-  // lcd_write_command(&strange_shit_1, 1);
-
-  // uint8_t lcd_display_normal_mode = 0x0c;
-  // lcd_write_command(&command_set_basic_mode, 1);
-
-  // uint8_t bias_mode = 0x14;
-  // lcd_write_command(&bias_mode, 1);
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -103,79 +90,28 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
   lcd_init(&hspi1);
+  lcd_set_cursor(0, 0);
   lcd_clear();
   lcd_backlight(1);
+  lcd_set_cursor(0, 0);
 
-  uint8_t data[3] = {0xff, 0xff, 0xff};
+  for (int i = 0; i < 3; i++)
+  {
+    lcd_draw(&heart, 8);
+    lcd_draw(&spacer, CHAR_SPACER);
+  }
 
-  lcd_set_cursor(60, 5);
-  lcd_draw(&data, 3);
-
-  // uint8_t rect_line = 0b111111111;
-  // rect_line = 0xff << 4;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-    // HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_RESET);
-    // HAL_Delay(1);
-    // HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_SET);
-    // HAL_Delay(1);
-
-    // lcd_write_command(0b00001101, 1);
-    // lcd_write_command(0xc0, 1);
-
-    // // lcd_write_command(0b00100001, 1);
-    // // lcd_write_command(0b10010000, 1);
-    // // lcd_write_command(0b00100000, 1);
-    // // lcd_write_command(0b00001100, 1);
-    // // lcd_write_command(0xB1, 1);
-
-    // lcd_write_data(0b01010101, 1);
-    // lcd_write_data(0b01010101, 1);
-    // lcd_write_data(0b01010101, 1);
-    // lcd_write_data(0b01010101, 1);
-    // lcd_write_data(0b01010101, 1);
-    // // lcd_write_data(0b01010101, 1);
-    // // lcd_write_data(0b01010101, 1);
-    // // lcd_write_data(0b01010101, 1);
-    // // lcd_write_data(0b01010101, 1);
-    // // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
-    // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-    // HAL_GPIO_TogglePin(LCD_LIGHT_PORT, LCD_LIGHT_PIN);
-    // HAL_Delay(1000);
-    // // HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_RESET);
-    // // HAL_Delay(1);
-    // // HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_SET);
-    // // HAL_Delay(1);
-
-    // for (int i = 0; i < 504; i++)
-    // {
-    //   lcd_write_data(0b00000000, 1);
-    // }
-    // for (int i = 0; i < 6; i++)
-    // {
-    //   for (int j = 0; j < 84; j++)
-    //   {
-    //     lcd_write_data(0b01010101, 1);
-    //   }
-    // }
-    // // }
-
-    // lcd_write_command(0b10101000, 1);
-    // lcd_write_command(0b01000010, 1);
-    // lcd_write_data(rect_line, 1);
-    // // lcd_write_data(rect_line, 1);
-    // // lcd_write_data(rect_line, 1);
-    // // lcd_write_data(rect_line, 1);
-    // rect_line = ~rect_line;
-    // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-    // HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -241,7 +177,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
