@@ -53,15 +53,15 @@ void lcd_clear()
         lcd_write_byte(0x00);
 }
 
-void lcd_draw(uint8_t *data, uint8_t width, uint8_t height)
+void lcd_draw(uint8_t *data, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
 {
-    for (int y = 0; y < height; y++)
+    for (int current_y = 0; current_y < height; current_y++)
     {
-        for (int x = 0; x < width; x++)
+        for (int current_x = 0; current_x < width; current_x++)
         {
-            if (data[y * width + x])
+            if (data[current_y * width + current_x])
             {
-                display_buffer[x] |= 1 << y;
+                display_buffer[(y * WIDTH + (current_y / 8) * width) + x + current_x] |= 1 << current_y;
             }
         }
     }

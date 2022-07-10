@@ -101,8 +101,6 @@ int main(void)
   lcd_backlight(1);
   lcd_set_cursor(0, 0);
 
-  lcd_draw(&heart, 7, 6);
-  lcd_update();
   // for (int i = 0; i < 3; i++)
   // {
   //   lcd_draw(&heart, 8);
@@ -114,8 +112,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-    HAL_Delay(100);
+    lcd_clear();
+    HAL_Delay(500);
+    lcd_draw(&heart, 7, 6, 35, 2);
+    lcd_update();
+    HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }
