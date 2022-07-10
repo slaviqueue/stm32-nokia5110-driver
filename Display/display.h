@@ -8,7 +8,8 @@
 
 void lcd_init(SPI_HandleTypeDef *_spi_handle);
 void lcd_clear(void);
-void lcd_draw(uint8_t *data, uint16_t size);
+void lcd_draw(uint8_t *data, uint8_t width, uint8_t height);
+void lcd_update(void);
 void lcd_draw_char(uint8_t *data);
 void lcd_backlight(uint8_t enabled);
 void lcd_set_cursor_x(uint8_t x);

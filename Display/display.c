@@ -17,7 +17,10 @@
 #define LCD_DATA_MODE GPIO_PIN_SET
 
 #define LCD_SPI_TIMEOUT 1
-#define PIXELS_AMOUNT 504
+
+#define WIDTH 84
+#define HEIGHT 48
+#define BUFFER_SIZE (WIDTH * HEIGHT / 8)
 
 SPI_HandleTypeDef *spi_handle;
 
@@ -25,6 +28,8 @@ static void lcd_reset(void);
 static void lcd_write_command(uint8_t data);
 static void lcd_write_data(uint8_t *data, uint16_t size);
 static void lcd_write_byte(uint8_t data);
+
+static uint8_t display_buffer[BUFFER_SIZE] = {0};
 
 void lcd_init(SPI_HandleTypeDef *_spi_handle)
 {
@@ -42,21 +47,27 @@ void lcd_init(SPI_HandleTypeDef *_spi_handle)
 
 void lcd_clear()
 {
-    lcd_write_command(0b10000000);
-    lcd_write_command(0b01000000);
+    lcd_set_cursor(0, 0);
 
     for (int i = 0; i < 504; i++)
-    {
         lcd_write_byte(0x00);
+}
+
+void lcd_draw(uint8_t *data, uint8_t width, uint8_t height)
+{
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            if (data[y * width + x])
+            {
+                display_buffer[x] |= 1 << y;
+            }
+        }
     }
 }
 
-void lcd_draw_char(uint8_t *character)
-{
-    lcd_draw(character, CHAR_LENGTH);
-}
-
-void lcd_draw(uint8_t *data, uint16_t size)
+void lcd_update()
 {
     /*
     For some fucking unknown reasons the line below
@@ -69,10 +80,8 @@ void lcd_draw(uint8_t *data, uint16_t size)
     lcd_draw(bitmap, 84);
     */
 
-    for (int i = 0; i < size; i++)
-    {
-        lcd_write_byte(data[i]);
-    }
+    for (int i = 0; i < BUFFER_SIZE; i++)
+        lcd_write_byte(display_buffer[i]);
 }
 
 void lcd_backlight(uint8_t enabled)
@@ -124,7 +133,7 @@ static void lcd_write_byte(uint8_t data)
     lcd_write_data(&data, 1);
 }
 
-void lcd_write_multiple_bytes(uint8_t *data, uint16_t size)
+static void lcd_write_multiple_bytes(uint8_t *data, uint16_t size)
 {
     lcd_write_data(data, size);
 }

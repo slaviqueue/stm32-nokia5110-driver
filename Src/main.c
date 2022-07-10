@@ -101,17 +101,21 @@ int main(void)
   lcd_backlight(1);
   lcd_set_cursor(0, 0);
 
-  for (int i = 0; i < 3; i++)
-  {
-    lcd_draw(&heart, 8);
-    lcd_draw(&spacer, CHAR_SPACER);
-  }
+  lcd_draw(&heart, 7, 6);
+  lcd_update();
+  // for (int i = 0; i < 3; i++)
+  // {
+  //   lcd_draw(&heart, 8);
+  //   lcd_draw(&spacer, CHAR_SPACER);
+  // }
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
