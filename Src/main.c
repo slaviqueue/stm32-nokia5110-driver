@@ -101,7 +101,7 @@ int main(void)
   lcd_backlight(1);
   lcd_set_cursor(0, 0);
 
-  lcd_draw(&heart, 7, 6, 35, 2);
+  lcd_draw(&heart, 7, 6, 25, 4);
   lcd_update();
   // for (int i = 0; i < 3; i++)
   // {
@@ -112,6 +112,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+    int y_pos = 20 + (int)(sin(HAL_GetTick() / 1000) * 10);
+    HAL_Delay(100);
+    lcd_clear();
+    lcd_draw(&heart, 7, 6, 25, y_pos);
+    lcd_update();
 
     /* USER CODE BEGIN 3 */
     // lcd_clear();

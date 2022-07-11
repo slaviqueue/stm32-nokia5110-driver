@@ -38,7 +38,7 @@ void lcd_init(SPI_HandleTypeDef *_spi_handle)
     lcd_reset();
     HAL_Delay(1);
     lcd_write_command(0x21); // extended commands
-    lcd_write_command(0xB0); // vop/contrast
+    lcd_write_command(0xB1); // vop/contrast
     lcd_write_command(0x04); // temp control
     lcd_write_command(0x14); // bias mode 1:40
     lcd_write_command(0x20); // basic commands
@@ -50,18 +50,23 @@ void lcd_clear()
     lcd_set_cursor(0, 0);
 
     for (int i = 0; i < 504; i++)
-        lcd_write_byte(0x00);
+        display_buffer[i] = 0;
 }
 
-void lcd_draw(uint8_t *data, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
+void lcd_draw(uint8_t *bitmap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
 {
     for (int current_y = 0; current_y < height; current_y++)
     {
         for (int current_x = 0; current_x < width; current_x++)
         {
-            if (data[current_y * width + current_x])
+            int current_bitmap_index = current_y * width + current_x;
+
+            if (bitmap[current_bitmap_index])
             {
-                display_buffer[(y * WIDTH + (current_y / 8) * width) + x + current_x] |= 1 << current_y;
+                int x_offset = x + current_x;
+                int y_offset = (current_y + y) / 8 * WIDTH;
+
+                display_buffer[x_offset + y_offset] |= 1 << (y + current_y) % 8;
             }
         }
     }
