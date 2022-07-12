@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "display.h"
 #include "font.h"
-#include "special_chars_font.h"
+#include "heart_bytemap.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -95,13 +95,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   lcd_init(&hspi1);
-  lcd_clear();
-  lcd_backlight(1);
-  // uint8_t **test = &font[87];
-  lcd_draw_bitmap(&font[82], 8, 8, 25, 4);
-  lcd_update();
+  lcd_set_font(basic_font);
   // for (int i = 0; i < 3; i++)
   // {
   //   lcd_draw(&heart, 8);
@@ -113,10 +108,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // int y_pos = 10 + (int)(sin(x++ / 20) * 3);
-    // lcd_clear();
-    // lcd_draw_bytemap(&heart, 7, 6, 25, y_pos);
-    // lcd_update();
+    int y_pos = 30 + (int)(sin(x++ / 20) * 3);
+    lcd_clear();
+    lcd_draw_bytemap(&heart, 7, 6, 25, y_pos);
+
+    lcd_backlight(1);
+    lcd_print("hello", 0, 0);
+    lcd_update();
     // HAL_Delay(10);
     // lcd_clear();
     // HAL_Delay(1000);

@@ -1,27 +1,24 @@
 #include "stm32f1xx_hal.h"
 #include "display.h"
+#include "string.h"
 
 #define LCD_CHIP_ENABLE_PORT GPIOA
 #define LCD_CHIP_ENABLE_PIN GPIO_PIN_4
-
 #define LCD_LIGHT_PORT GPIOA
 #define LCD_LIGHT_PIN GPIO_PIN_3
-
 #define LCD_RESET_PORT GPIOA
 #define LCD_RESET_PIN GPIO_PIN_2
-
 #define LCD_DATA_COMMAND_PORT GPIOA
 #define LCD_DATA_COMMAND_PIN GPIO_PIN_1
-
 #define LCD_COMMAND_MODE GPIO_PIN_RESET
 #define LCD_DATA_MODE GPIO_PIN_SET
-
 #define LCD_SPI_TIMEOUT 1
 
 #define WIDTH 84
 #define HEIGHT 48
 #define BUFFER_SIZE (WIDTH * HEIGHT / 8)
 
+uint8_t font[FONT_LENGTH][LETTER_LENGTH];
 SPI_HandleTypeDef *spi_handle;
 
 static void lcd_reset(void);
@@ -57,6 +54,13 @@ void lcd_clear()
         display_buffer[i] = 0;
 }
 
+void lcd_set_font(uint8_t _font[FONT_LENGTH][LETTER_LENGTH])
+{
+    for (int i = 0; i < FONT_LENGTH; i++)
+        for (int j = 0; j < LETTER_LENGTH; j++)
+            font[i][j] = _font[i][j];
+}
+
 void lcd_draw_bytemap(uint8_t *bytemap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
 {
     for (int current_y = 0; current_y < height; current_y++)
@@ -69,11 +73,19 @@ void lcd_draw_bytemap(uint8_t *bytemap, uint8_t width, uint8_t height, uint8_t x
     }
 }
 
-void lcd_draw_bitmap(uint8_t *bitmap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
+void lcd_draw_bitmap(uint8_t *bitmap, uint8_t width, uint8_t height, uint8_t target_x, uint8_t target_y)
 {
     for (int y = 0; y < height; y++)
         for (int x = 0; x < width; x++)
-            lcd_set_pixel(x, y, bitmap[y] & (1 << x));
+            lcd_set_pixel(target_x + x, target_y + y, bitmap[y] & (1 << x));
+}
+
+void lcd_print(char *text, uint8_t x, uint8_t y)
+{
+    for (int i = 0; i < strlen(text); i++)
+    {
+        lcd_draw_bitmap(&font[text[i]], 8, 8, x + i * 8, y);
+    }
 }
 
 void lcd_update()
