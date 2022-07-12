@@ -38,9 +38,9 @@ void lcd_init(SPI_HandleTypeDef *_spi_handle)
     lcd_reset();
     HAL_Delay(1);
     lcd_write_command(0x21); // extended commands
-    lcd_write_command(0xB1); // vop/contrast
+    lcd_write_command(0xB0); // vop/contrast
     lcd_write_command(0x04); // temp control
-    lcd_write_command(0x14); // bias mode 1:40
+    lcd_write_command(0x13); // bias mode 1:40
     lcd_write_command(0x20); // basic commands
     lcd_write_command(0x0C); // normal mode
 }
@@ -49,7 +49,7 @@ void lcd_clear()
 {
     lcd_set_cursor(0, 0);
 
-    for (int i = 0; i < 504; i++)
+    for (int i = 0; i < BUFFER_SIZE; i++)
         display_buffer[i] = 0;
 }
 

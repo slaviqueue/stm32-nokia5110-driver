@@ -113,13 +113,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-    int y_pos = 20 + (int)(sin(HAL_GetTick() / 1000) * 10);
-    HAL_Delay(100);
+    /* USER CODE BEGIN 3 */
+    int y_pos = 20 + (int)(sin(HAL_GetTick() / 500) * 5);
     lcd_clear();
     lcd_draw(&heart, 7, 6, 25, y_pos);
     lcd_update();
-
-    /* USER CODE BEGIN 3 */
+    // HAL_Delay(10);
     // lcd_clear();
     // HAL_Delay(1000);
     // lcd_draw(&heart, 7, 6, 35, 2);
@@ -190,7 +189,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
