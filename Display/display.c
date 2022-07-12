@@ -28,6 +28,10 @@ static void lcd_reset(void);
 static void lcd_write_command(uint8_t data);
 static void lcd_write_data(uint8_t *data, uint16_t size);
 static void lcd_write_byte(uint8_t data);
+static void lcd_set_pixel(uint8_t x, uint8_t y, uint8_t val);
+static void lcd_set_cursor_y(uint8_t y);
+static void lcd_set_cursor_x(uint8_t x);
+static void lcd_set_cursor(uint8_t x, uint8_t y);
 
 static uint8_t display_buffer[BUFFER_SIZE] = {0};
 
@@ -38,9 +42,9 @@ void lcd_init(SPI_HandleTypeDef *_spi_handle)
     lcd_reset();
     HAL_Delay(1);
     lcd_write_command(0x21); // extended commands
-    lcd_write_command(0xB0); // vop/contrast
+    lcd_write_command(0xB1); // vop/contrast
     lcd_write_command(0x04); // temp control
-    lcd_write_command(0x13); // bias mode 1:40
+    lcd_write_command(0x14); // bias mode 1:40
     lcd_write_command(0x20); // basic commands
     lcd_write_command(0x0C); // normal mode
 }
@@ -53,23 +57,23 @@ void lcd_clear()
         display_buffer[i] = 0;
 }
 
-void lcd_draw(uint8_t *bitmap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
+void lcd_draw_bytemap(uint8_t *bytemap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
 {
     for (int current_y = 0; current_y < height; current_y++)
     {
         for (int current_x = 0; current_x < width; current_x++)
         {
-            int current_bitmap_index = current_y * width + current_x;
-
-            if (bitmap[current_bitmap_index])
-            {
-                int x_offset = x + current_x;
-                int y_offset = (current_y + y) / 8 * WIDTH;
-
-                display_buffer[x_offset + y_offset] |= 1 << (y + current_y) % 8;
-            }
+            int current_bytemap_index = current_y * width + current_x;
+            lcd_set_pixel(x + current_x, y + current_y, bytemap[current_bytemap_index]);
         }
     }
+}
+
+void lcd_draw_bitmap(uint8_t *bitmap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
+{
+    for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            lcd_set_pixel(x, y, bitmap[y] & (1 << x));
 }
 
 void lcd_update()
@@ -94,20 +98,40 @@ void lcd_backlight(uint8_t enabled)
     HAL_GPIO_WritePin(LCD_LIGHT_PORT, LCD_LIGHT_PIN, enabled ? GPIO_PIN_RESET : GPIO_PIN_SET);
 }
 
-void lcd_set_cursor_y(uint8_t y)
+static void lcd_set_pixel(uint8_t x, uint8_t y, uint8_t val)
+{
+    int y_offset = y / 8 * WIDTH;
+
+    if (val)
+        display_buffer[y_offset + x] |= 1 << y % 8;
+    else
+        display_buffer[y_offset + x] &= ~(1 << y % 8);
+}
+
+static void lcd_set_cursor_y(uint8_t y)
 {
     lcd_write_command(0b01000000 | y);
 }
 
-void lcd_set_cursor_x(uint8_t x)
+static void lcd_set_cursor_x(uint8_t x)
 {
     lcd_write_command(0b10000000 | x);
 }
 
-void lcd_set_cursor(uint8_t x, uint8_t y)
+static void lcd_set_cursor(uint8_t x, uint8_t y)
 {
     lcd_set_cursor_x(x);
     lcd_set_cursor_y(y);
+}
+
+static void lcd_write_byte(uint8_t data)
+{
+    lcd_write_data(&data, 1);
+}
+
+static void lcd_write_multiple_bytes(uint8_t *data, uint16_t size)
+{
+    lcd_write_data(data, size);
 }
 
 static void lcd_write_command(uint8_t data)
@@ -131,14 +155,4 @@ static void lcd_reset()
     HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_RESET);
     HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_SET);
-}
-
-static void lcd_write_byte(uint8_t data)
-{
-    lcd_write_data(&data, 1);
-}
-
-static void lcd_write_multiple_bytes(uint8_t *data, uint16_t size)
-{
-    lcd_write_data(data, size);
 }
