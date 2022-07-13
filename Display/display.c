@@ -84,14 +84,14 @@ void lcd_set_font(uint8_t _font[FONT_LENGTH][LETTER_LENGTH])
             font[i][j] = _font[i][j];
 }
 
-void lcd_draw_bytemap(uint8_t *bytemap, uint8_t width, uint8_t height, uint8_t x, uint8_t y)
+void lcd_draw_bytemap(uint8_t *bytemap, uint8_t width, uint8_t height, uint8_t target_x, uint8_t target_y)
 {
-    for (int current_y = 0; current_y < height; current_y++)
+    for (int y = 0; y < height; y++)
     {
-        for (int current_x = 0; current_x < width; current_x++)
+        for (int x = 0; x < width; x++)
         {
-            int current_bytemap_index = current_y * width + current_x;
-            lcd_set_pixel(x + current_x, y + current_y, bytemap[current_bytemap_index]);
+            int current_bytemap_index = y * width + x;
+            lcd_set_pixel(target_x + x, target_y + y, bytemap[current_bytemap_index]);
         }
     }
 }
