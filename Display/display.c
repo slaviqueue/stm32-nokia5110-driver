@@ -116,9 +116,7 @@ void lcd_set_pixel(uint8_t x, uint8_t y, uint8_t val)
 void lcd_print(char *text, uint8_t x, uint8_t y)
 {
     for (int i = 0; i < strlen(text); i++)
-    {
         lcd_draw_bitmap(&font[text[i]], 8, 8, x + i * 8, y);
-    }
 }
 
 void lcd_update()
