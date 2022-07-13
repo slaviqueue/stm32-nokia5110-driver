@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "display.h"
 #include "font.h"
-#include "heart_bytemap.h"
+#include "heart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,6 +97,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   lcd_init(&hspi1);
   lcd_set_font(basic_font);
+  lcd_set_contrast(0xb0);
+  lcd_set_temp_control(0);
+  lcd_set_bias_mode(0x13);
   // for (int i = 0; i < 3; i++)
   // {
   //   lcd_draw(&heart, 8);
@@ -110,10 +113,10 @@ int main(void)
     /* USER CODE BEGIN 3 */
     int y_pos = 30 + (int)(sin(x++ / 20) * 3);
     lcd_clear();
-    lcd_draw_bytemap(&heart, 7, 6, 25, y_pos);
+    lcd_draw_bitmap(&heart, 8, 8, 0, y_pos);
 
     lcd_backlight(1);
-    lcd_print("hello", 0, 0);
+    lcd_print("hello, mom", 0, 0);
     lcd_update();
     // HAL_Delay(10);
     // lcd_clear();

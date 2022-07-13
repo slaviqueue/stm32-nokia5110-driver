@@ -29,6 +29,9 @@ static void lcd_set_pixel(uint8_t x, uint8_t y, uint8_t val);
 static void lcd_set_cursor_y(uint8_t y);
 static void lcd_set_cursor_x(uint8_t x);
 static void lcd_set_cursor(uint8_t x, uint8_t y);
+static void lcd_set_extended_commands();
+static void lcd_set_basic_commands();
+static void lcd_set_normal_mode();
 
 static uint8_t display_buffer[BUFFER_SIZE] = {0};
 
@@ -38,12 +41,33 @@ void lcd_init(SPI_HandleTypeDef *_spi_handle)
 
     lcd_reset();
     HAL_Delay(1);
-    lcd_write_command(0x21); // extended commands
-    lcd_write_command(0xB1); // vop/contrast
-    lcd_write_command(0x04); // temp control
-    lcd_write_command(0x14); // bias mode 1:40
-    lcd_write_command(0x20); // basic commands
-    lcd_write_command(0x0C); // normal mode
+    lcd_set_normal_mode();
+}
+
+void lcd_set_normal_mode()
+{
+    lcd_write_command(0x0C);
+}
+
+void lcd_set_contrast(uint8_t contrast)
+{
+    lcd_set_extended_commands();
+    lcd_write_command(0x80 | contrast);
+    lcd_set_basic_commands();
+}
+
+void lcd_set_temp_control(uint8_t temp_control)
+{
+    lcd_set_extended_commands();
+    lcd_write_command(0x04 | temp_control);
+    lcd_set_basic_commands();
+}
+
+void lcd_set_bias_mode(uint8_t bias_mode)
+{
+    lcd_set_extended_commands();
+    lcd_write_command(0x10 | bias_mode);
+    lcd_set_basic_commands();
 }
 
 void lcd_clear()
@@ -144,6 +168,16 @@ static void lcd_write_byte(uint8_t data)
 static void lcd_write_multiple_bytes(uint8_t *data, uint16_t size)
 {
     lcd_write_data(data, size);
+}
+
+static void lcd_set_extended_commands()
+{
+    lcd_write_command(0x21);
+}
+
+static void lcd_set_basic_commands()
+{
+    lcd_write_command(0x20); // basic commands
 }
 
 static void lcd_write_command(uint8_t data)
