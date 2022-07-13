@@ -100,6 +100,7 @@ int main(void)
   lcd_set_contrast(0xb0);
   lcd_set_temp_control(0);
   lcd_set_bias_mode(0x13);
+  lcd_backlight(1);
   // for (int i = 0; i < 3; i++)
   // {
   //   lcd_draw(&heart, 8);
@@ -111,19 +112,22 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    int y_pos = 30 + (int)(sin(x++ / 20) * 3);
     lcd_clear();
-    lcd_draw_bitmap(&heart, 8, 8, 0, y_pos);
 
-    lcd_backlight(1);
+    int heart_y_pos = 30 + (int)(sin(x++ / 20) * 3);
+    lcd_draw_bitmap(&heart, 8, 8, 0, heart_y_pos);
+
     lcd_print("hello, mom", 0, 0);
+
+    int sine_y_pos = 30;
+    int sine_x_pos = 16;
+    for (int sine_x = 0; sine_x < 16; sine_x++)
+    {
+      int val = sin(sine_x + (x / 100)) * 2;
+      lcd_set_pixel(sine_x_pos + sine_x, sine_y_pos + val, 1);
+    }
+
     lcd_update();
-    // HAL_Delay(10);
-    // lcd_clear();
-    // HAL_Delay(1000);
-    // lcd_draw(&heart, 7, 6, 35, 2);
-    // lcd_update();
-    // HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
