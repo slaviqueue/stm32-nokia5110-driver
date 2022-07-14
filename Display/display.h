@@ -6,7 +6,12 @@
 #define FONT_LENGTH 128
 #define LETTER_LENGTH 8
 
-void lcd_init(SPI_HandleTypeDef *_spi_handle);
+void lcd_set_spi_handle(SPI_HandleTypeDef *_spi_handle);
+
+void lcd_set_chip_enable_pin(GPIO_TypeDef *port, uint16_t pin);
+void lcd_set_light_pin(GPIO_TypeDef *port, uint16_t pin);
+void lcd_set_reset_pin(GPIO_TypeDef *port, uint16_t pin);
+void lcd_set_data_command_pin(GPIO_TypeDef *port, uint16_t pin);
 
 void lcd_set_contrast(uint8_t contrast);
 void lcd_set_temp_control(uint8_t temp_control);

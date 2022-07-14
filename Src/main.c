@@ -95,18 +95,22 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  lcd_init(&hspi1);
+
+  lcd_set_chip_enable_pin(GPIOA, GPIO_PIN_4);
+  lcd_set_light_pin(GPIOA, GPIO_PIN_3);
+  lcd_set_reset_pin(GPIOA, GPIO_PIN_2);
+  lcd_set_data_command_pin(GPIOA, GPIO_PIN_1);
+
+  lcd_set_spi_handle(&hspi1);
+
   lcd_set_font(basic_font);
   lcd_set_contrast(0xb0);
   lcd_set_temp_control(0);
   lcd_set_bias_mode(0x13);
   lcd_backlight(1);
-  // for (int i = 0; i < 3; i++)
-  // {
-  //   lcd_draw(&heart, 8);
-  //   lcd_draw(&spacer, CHAR_SPACER);
-  // }
+
   uint64_t x = 0;
+
   while (1)
   {
     /* USER CODE END WHILE */

@@ -2,14 +2,6 @@
 #include "display.h"
 #include "string.h"
 
-#define LCD_CHIP_ENABLE_PORT GPIOA
-#define LCD_CHIP_ENABLE_PIN GPIO_PIN_4
-#define LCD_LIGHT_PORT GPIOA
-#define LCD_LIGHT_PIN GPIO_PIN_3
-#define LCD_RESET_PORT GPIOA
-#define LCD_RESET_PIN GPIO_PIN_2
-#define LCD_DATA_COMMAND_PORT GPIOA
-#define LCD_DATA_COMMAND_PIN GPIO_PIN_1
 #define LCD_COMMAND_MODE GPIO_PIN_RESET
 #define LCD_DATA_MODE GPIO_PIN_SET
 #define LCD_SPI_TIMEOUT 1
@@ -19,7 +11,20 @@
 #define BUFFER_SIZE (WIDTH * HEIGHT / 8)
 
 uint8_t font[FONT_LENGTH][LETTER_LENGTH];
+
 SPI_HandleTypeDef *spi_handle;
+
+GPIO_TypeDef *lcd_chip_enable_port;
+uint16_t lcd_chip_enable_pin;
+
+GPIO_TypeDef *lcd_light_port;
+uint16_t lcd_light_pin;
+
+GPIO_TypeDef *lcd_reset_port;
+uint16_t lcd_reset_pin;
+
+GPIO_TypeDef *lcd_data_command_port;
+uint16_t lcd_data_command_pin;
 
 static void lcd_reset(void);
 static void lcd_write_command(uint8_t data);
@@ -34,7 +39,7 @@ static void lcd_set_normal_mode();
 
 static uint8_t display_buffer[BUFFER_SIZE] = {0};
 
-void lcd_init(SPI_HandleTypeDef *_spi_handle)
+void lcd_set_spi_handle(SPI_HandleTypeDef *_spi_handle)
 {
     spi_handle = _spi_handle;
 
@@ -138,7 +143,31 @@ void lcd_update()
 
 void lcd_backlight(uint8_t enabled)
 {
-    HAL_GPIO_WritePin(LCD_LIGHT_PORT, LCD_LIGHT_PIN, enabled ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(lcd_light_port, lcd_light_pin, enabled ? GPIO_PIN_RESET : GPIO_PIN_SET);
+}
+
+void lcd_set_chip_enable_pin(GPIO_TypeDef *port, uint16_t pin)
+{
+    lcd_chip_enable_port = port;
+    lcd_chip_enable_pin = pin;
+}
+
+void lcd_set_light_pin(GPIO_TypeDef *port, uint16_t pin)
+{
+    lcd_light_port = port;
+    lcd_light_pin = pin;
+}
+
+void lcd_set_reset_pin(GPIO_TypeDef *port, uint16_t pin)
+{
+    lcd_reset_port = port;
+    lcd_reset_pin = pin;
+}
+
+void lcd_set_data_command_pin(GPIO_TypeDef *port, uint16_t pin)
+{
+    lcd_data_command_port = port;
+    lcd_data_command_pin = pin;
 }
 
 static void lcd_set_cursor_y(uint8_t y)
@@ -179,23 +208,23 @@ static void lcd_set_basic_commands()
 
 static void lcd_write_command(uint8_t data)
 {
-    HAL_GPIO_WritePin(LCD_DATA_COMMAND_PORT, LCD_DATA_COMMAND_PIN, LCD_COMMAND_MODE);
-    HAL_GPIO_WritePin(LCD_CHIP_ENABLE_PORT, LCD_CHIP_ENABLE_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(lcd_data_command_port, lcd_data_command_pin, LCD_COMMAND_MODE);
+    HAL_GPIO_WritePin(lcd_chip_enable_port, lcd_chip_enable_pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(spi_handle, &data, 1, LCD_SPI_TIMEOUT);
-    HAL_GPIO_WritePin(LCD_CHIP_ENABLE_PORT, LCD_CHIP_ENABLE_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(lcd_chip_enable_port, lcd_chip_enable_pin, GPIO_PIN_SET);
 }
 
 static void lcd_write_data(uint8_t *data, uint16_t size)
 {
-    HAL_GPIO_WritePin(LCD_DATA_COMMAND_PORT, LCD_DATA_COMMAND_PIN, LCD_DATA_MODE);
-    HAL_GPIO_WritePin(LCD_CHIP_ENABLE_PORT, LCD_CHIP_ENABLE_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(lcd_data_command_port, lcd_data_command_pin, LCD_DATA_MODE);
+    HAL_GPIO_WritePin(lcd_chip_enable_port, lcd_chip_enable_pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(spi_handle, data, size, LCD_SPI_TIMEOUT);
-    HAL_GPIO_WritePin(LCD_CHIP_ENABLE_PORT, LCD_CHIP_ENABLE_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(lcd_chip_enable_port, lcd_chip_enable_pin, GPIO_PIN_SET);
 }
 
 static void lcd_reset()
 {
-    HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(lcd_reset_port, lcd_reset_pin, GPIO_PIN_RESET);
     HAL_Delay(1);
-    HAL_GPIO_WritePin(LCD_RESET_PORT, LCD_RESET_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(lcd_reset_port, lcd_reset_pin, GPIO_PIN_SET);
 }
